@@ -1,0 +1,25 @@
+public class GetStudentsFromClass {
+    
+    public static List<String> getStudentsOfClass(Id classId){
+        List<Student__c> studentList = [SELECT First_Name__c, Last_Name__c FROM Student__c WHERE Class__r.Id = :classId ];
+        List<String> studentName  = new List<String>();
+        for(Student__c stud : studentList){
+            studentName.add(stud.First_Name__c+' '+stud.Last_Name__c);
+        }
+        return studentName;
+    }
+    
+    public static Map<String, Set<Id>> getStudentId(){
+        Map<String,Set<Id>> newMap = new Map<String, Set<Id>>();
+        Set<Id> studentId = new Set<Id>();
+        for(Class__c classData : [SELECT Id,Name,(SELECT Id FROM Students__r) FROM Class__C]){
+            studentId.clear();
+            for(Student__c student : classData.Students__r){
+                studentId.add(student.Id);
+            }
+            newMap.put(classData.Name,studentId);
+        }   
+        return newMap;
+    }
+
+}	

@@ -1,0 +1,11 @@
+public class GetSObject {
+    
+    public List<String> getSObjects(){
+        List<String> objectList = new List<String>();
+        for(Schema.SObjectType o : Schema.getGlobalDescribe().values()){
+            Schema.DescribeSObjectResult obj = o.getDescribe();	
+            objectList.add(obj.getName());
+        }
+        return objectList;
+    }
+}

@@ -1,0 +1,26 @@
+public class WorkingDays {
+    public Integer calculateWorkingDays(Date d1, Date d2){
+        Integer workingDays = 0;
+        if(d1 < d2){
+            Date tempDate = d1;
+            while(d1<d2){
+                DateTime mydateTime = (DateTime)d1 ;
+                String weekDay = mydateTime.format('E');
+                if(weekDay != 'Sat' && weekDay != 'Sun'){
+                    system.debug(weekDay);
+                    workingDays = workingDays + 1;
+                }
+                d1 = d1.addDays(1);
+            }
+        }
+        else{
+            throw new WorkingDaysException('Date 1 cannot be greater than Date 2');
+        }
+        return workingDays;
+    }
+    public class WorkingDaysException extends Exception{
+        
+	}
+    
+    
+}

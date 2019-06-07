@@ -1,0 +1,33 @@
+public class Stack {
+    
+    List<Integer> stackList ;
+    
+    public Stack(){
+        stackList = new List<Integer>();
+    }
+    
+    public Integer stackSize(){
+        return this.stackList.size();
+    }
+    
+    public Boolean isStackEmpty(){
+        if(stackList.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+    
+    public void push(Integer input){
+        this.stackList.add(input);
+    }
+    
+    public Integer pop(){
+        if(isStackEmpty() ){
+            throw new StackException('Stack is Empty');
+        }
+        else{
+            return this.stackList.remove(stackList.size()-1);
+        }
+    }
+
+}
