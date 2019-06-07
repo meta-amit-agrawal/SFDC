@@ -1,0 +1,10 @@
+SELECT First_Name__c, Last_Name__c, DOB__c,Sex__c FROM Student__c WHERE Last_Name__c LIKE 'S%'
+SELECT First_Name__c,Last_Name__c, Class__r.Name FROM Student__c WHERE Student__c.Class__r.Name Like 'X%'
+SELECT First_Name__c, Last_Name__c , Class__r.Name FROM Student__c
+SELECT Name, (SELECT First_Name__c, Last_Name__c FROM Students__r) FROM Class__c
+SELECT First_Name__c , Class__r.Name FROM Student__c WHERE Class__r.Teacher__r.Name like 'S%'
+SELECT First_Name__c, Last_Name__c FROM Student__c WHERE CALENDAR_YEAR(DOB__c) > 2000
+SELECT Name FROM Lead where LastModifiedDate = THIS_MONTH
+SELECT Name,(SELECT First_Name__c, Last_Name__c FROM Students__r WHERE First_Name__c LIKE 's%') FROM Class__c
+SELECT Name FROM Contact where Subjects__c INCLUDES ('Hindi;English')
+SELECT First_Name__c, Last_Name__c FROM Student__c WHERE Class__r.Teacher__r.Subjects__c includes ('Hindi','Maths')
