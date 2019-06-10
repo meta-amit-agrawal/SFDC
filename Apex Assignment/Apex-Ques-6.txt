@@ -1,0 +1,12 @@
+public class RemindOpportunityOwners implements Schedulable{
+    public void execute(SchedulableContext sc){
+        List<Opportunity> oppList = [SELECT Name, Owner.Email,LastModifiedDate FROM Opportunity limit 1];
+        Date d = Date.Today()-20;
+        for(Opportunity o : oppList){
+            if(o.LastModifiedDate < d ){
+               EmailManager em = new EmailManager();
+               em.sendMail(o.Owner.Email, 'Regarding Updating Data', 'Hii,   \nThis is to inform you that your data is not updated since 30 days. \nThanks');
+            }
+        }   
+    }
+}
