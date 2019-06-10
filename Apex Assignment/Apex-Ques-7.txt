@@ -5,12 +5,12 @@ public class AccountContactRelated {
         Account accountOfContact = contactById.Account;
         if(accountOfContact.ContactIDs__c == null){
             List<Contact> contactRelatedToAccount = [SELECT Id FROM Contact WHERE Account.Id = :accountOfContact.ID];
-            String contactIDList='';
+            List<Id> contactIdList = new List<Id>();
             for(Contact con : contactRelatedToAccount){
-                contactIDList  = contactIDList+con.Id+', ';
+                contactIDList.add(con.Id);
             }
-            contactIDList = contactIDList.removeEnd(', ');
-            accountOfContact.ContactIDs__c = contactIDList;
+            String ContactIds = String.join(contactIDList, ',');
+            accountOfContact.ContactIDs__c = ContactIDs;
             update accountOfContact;
         }
         else{

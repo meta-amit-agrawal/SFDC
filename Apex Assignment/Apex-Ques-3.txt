@@ -3,6 +3,7 @@ public class WorkingDays {
         Integer workingDays = 0;
         if(d1 < d2){
             Date tempDate = d1;
+            d1 = d1.addDays(1);
             while(d1<d2){
                 DateTime mydateTime = (DateTime)d1 ;
                 String weekDay = mydateTime.format('E');
@@ -20,7 +21,7 @@ public class WorkingDays {
     }
     public class WorkingDaysException extends Exception{
         
-	}
+    }
     
     
 }
