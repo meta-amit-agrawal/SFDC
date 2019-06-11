@@ -1,0 +1,55 @@
+trigger StudentTrigger on Student__c (before insert, before delete) {
+    
+    if(Trigger.isBefore){
+        
+        Set<Id> classIdList = new Set<id>();
+        Map<Id, Class__c> clMap;
+        
+        if(Trigger.isInsert){       
+            for(Student__c stu : Trigger.new){
+                Id class_id = stu.Class__c;
+                classIdList.add(class_id);
+            }
+            List<Class__c> classList = [
+                                       SELECT Id,MyCount__c,Number_Of_Students__c,MaxSize__c 
+                                       FROM Class__c 
+                                       WHERE Id in : classIdList
+                                       ];
+            
+            clMap = new Map<Id, Class__c>(classList);
+            
+            for(Student__c stu : Trigger.new){
+                Class__c stuClass = clMap.get(stu.Class__c);
+                if(stuClass.Number_Of_Students__c == stuClass.MaxSize__c){
+                    stu.addError('Student Can\'t be added as class is full');
+                }
+                stuClass.MyCount__c += 1;
+            }
+            
+            update classList;
+        }
+        
+        if(Trigger.isDelete){
+            for(Student__c stu : Trigger.old){
+                Id class_id = stu.Class__c;
+                classIdList.add(class_id);
+            }
+            
+            List<Class__c> classList = [
+                                       SELECT Id,MyCount__c 
+                                       FROM Class__c 
+                                       WHERE Id in : classIdList
+                                       ];
+            
+            clMap = new Map<Id, Class__c>(classList);
+            
+            for(Student__c stu : Trigger.old){
+                Class__c stuClass = clMap.get(stu.Class__c);
+                stuClass.MyCount__c -= 1;
+            }
+            
+            update classList;
+        }
+        
+    }
+}

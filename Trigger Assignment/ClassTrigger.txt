@@ -1,0 +1,19 @@
+trigger ClassTrigger on Class__c (before delete) {
+    if(Trigger.isBefore){
+        if(Trigger.isDelete){
+            
+            Class__c[] classes = [
+                                 SELECT Id,(SELECT Id FROM Students__r WHERE Sex__c = 'Female') 
+                                 FROM Class__c 
+                                 WHERE Id in : Trigger.oldMap.keySet()
+                                 ];
+            
+            for(Class__c cl : classes){    
+                if(cl.Students__r.size()>1){
+                    Class__c actualClass = Trigger.oldMap.get(cl.Id);
+                    actualClass.addError('Class With 1 or more Female Students can\'t be deleted');
+                }
+            }
+        }
+    }
+}

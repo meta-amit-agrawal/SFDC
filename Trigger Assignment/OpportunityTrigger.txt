@@ -1,0 +1,26 @@
+trigger OpportunityTrigger on Opportunity (before update, after update) {
+    if(Trigger.isBefore){
+        if(Trigger.isUpdate){
+            for(Opportunity opp : Trigger.new){
+                if(opp.StageName == 'Closed Won' || opp.StageName == 'Closed Lost'){
+                    opp.CloseDate = System.today();
+                }
+            }
+        }
+    }
+    
+    if(Trigger.isAfter){
+        if(Trigger.isUpdate){
+            Set<Id> oppId = new Set<Id>();
+            for(Opportunity opp : Trigger.new){
+                if(opp.Custom_Status__c == 'Reset'){
+                    oppId.add(opp.id);
+                }
+            }
+            if(oppId!=null && oppId.size()>0){
+                delete [SELECT Id FROM OpportunityLineItem WHERE OpportunityId IN : oppId];
+            }
+        }
+    }
+
+}
