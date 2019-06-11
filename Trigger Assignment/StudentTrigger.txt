@@ -23,7 +23,9 @@ trigger StudentTrigger on Student__c (before insert, before delete) {
                 if(stuClass.Number_Of_Students__c == stuClass.MaxSize__c){
                     stu.addError('Student Can\'t be added as class is full');
                 }
-                stuClass.MyCount__c += 1;
+                else{
+                    stuClass.MyCount__c += 1;
+                }
             }
             
             update classList;
