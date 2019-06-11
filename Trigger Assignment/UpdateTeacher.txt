@@ -1,0 +1,20 @@
+trigger UpdateTeacher on Contact (before insert , before update) {
+    if(Trigger.isBefore){
+        if(Trigger.isInsert){
+            for(Contact con : Trigger.New){
+                if(con.Subjects__c!=null  &&  con.Subjects__c.contains('Hindi')){
+                    con.addError('Hindi Subject Teacher Can\'t be Inserted');
+                }
+            }
+        }
+        if(Trigger.isUpdate){
+            for(Contact con : Trigger.new){
+                if(con.Subjects__c!=null  &&  con.Subjects__c.contains('Hindi')){
+                    con.addError('Hindi Subject Teacher Can\'t be Updated');
+                }
+            }
+        }
+    }
+    
+    
+}
