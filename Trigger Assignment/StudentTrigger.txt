@@ -1,4 +1,4 @@
-trigger StudentTrigger on Student__c (before insert, after delete,after insert) {
+trigger StudentTrigger on Student__c (before insert, before delete,after insert) {
     
     if(Trigger.isBefore){
         
@@ -50,7 +50,7 @@ trigger StudentTrigger on Student__c (before insert, after delete,after insert) 
             
             clMap = new Map<Id, Class__c>(classList);
             
-            for(Student__c stu : Trigger.new){
+            for(Student__c stu : Trigger.old){
                 Class__c stuClass = clMap.get(stu.Class__c);
                 stuClass.MyCount__c += 1;
             }
