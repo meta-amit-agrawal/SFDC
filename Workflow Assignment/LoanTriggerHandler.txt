@@ -1,0 +1,16 @@
+public class LoanTriggerHandler {
+    public static void onBeforeInsertUpdateLoanManager(List<Loan__c> loanList){
+        Set<String> setCity = new Set<String>();
+        for(Loan__c l : loanList){
+            String city = l.City__c.capitalize();
+            setCity.add(city);
+        }
+        Map<String,CityManager__c> mapOfCityManager = new Map<String, CityManager__c>();
+        for(CityManager__c cm : [SELECT City__c, Manager__c FROM CityManager__c WHERE City__c in:setCity]){
+            mapOfCityManager.put(cm.City__c,cm);
+        }
+        for(Loan__c l : loanList){
+            l.Manager__c = mapOfCityManager.get(l.City__c.capitalize()).Manager__c;
+        }
+    }
+}
