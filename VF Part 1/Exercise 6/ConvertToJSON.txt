@@ -1,0 +1,15 @@
+<apex:page controller="JSONConvertor">
+    <apex:form >
+        <apex:pageBlock title="Student Detail Into JSON Format">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Convert" action="{!convertToJSON}" reRender="showResult"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection >
+                <apex:inputText value="{! studentId}" label="Student Id: "/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection id="showResult" >
+                <apex:outputText >{!jsonOutput}</apex:outputText>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

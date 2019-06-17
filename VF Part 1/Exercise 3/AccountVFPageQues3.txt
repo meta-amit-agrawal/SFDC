@@ -1,0 +1,43 @@
+<apex:page controller="AccountcustomControllerQues3">
+    <apex:form >
+        <apex:pageBlock title="Account Search" id="accountSearch">
+            <apex:pageBlockSection >
+                <apex:selectList value="{!selectedOption}" size="1" multiselect="false">
+                    <apex:selectOptions value="{!searchKey}">
+                    </apex:selectOptions>
+                </apex:selectList>
+                <apex:inputText value="{!searchString}" label="Input"/>
+                <apex:commandButton value="Search Records" action="{!search}" reRender="show_account,buttons"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection >
+                <apex:pageBlockTable id="show_account" value="{!account}" var="a">
+                    <apex:column value="{!a.Id}"/>
+                    <apex:column value="{!a.Name}"/>
+                    <apex:column value="{!a.BillingCity}"/>
+                    <apex:column value="{!a.BillingState}"/>
+                    <apex:column value="{!a.BillingCountry}"/>
+                </apex:pageBlockTable>
+                <br/>
+                <apex:outputPanel id="buttons">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                Page:{! PageNumber } of {! CEILING(noOfRecords/size)}
+                            </td>
+                            <td align="center">
+                                <apex:commandButton reRender="accountSearch" value="Previous" action="{! previous }" disabled="{!!hasPrevious}"/>
+                                &nbsp;
+                                &nbsp;
+                                <apex:commandButton reRender="accountSearch" value="Next" action="{! next }" disabled="{!!hasNext}"/>
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
