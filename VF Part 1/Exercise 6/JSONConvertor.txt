@@ -1,14 +1,12 @@
 public class JSONConvertor {
     public String jsonOutput{get; set;}
     public Id studentId{get; set;}
-    public Boolean showJSONOutput{get; set;}
     
     public JSONConvertor(){
           showJSONOutput = false;
     }
     
     public void convertToJSON(){
-        this.showJSONOutput = true;
         Student__c student = [
                              SELECT Id, First_Name__c, Last_Name__c, DOB__c, Age__c 
                              FROM Student__c 

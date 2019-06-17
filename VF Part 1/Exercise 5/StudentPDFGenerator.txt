@@ -1,0 +1,21 @@
+<apex:page standardController="Student__c" extensions="StudentPDFGeneratorController">
+    <apex:form >
+        <apex:pageBlock >
+        <apex:pageBlockSection >
+            <apex:pageBlockTable value="{!students}" var="s">
+                <apex:column value="{!s.Id}"/>
+                <apex:column value="{!s.First_Name__c}"/>
+                <apex:column value="{!s.Last_Name__c}"/>
+                <apex:column value="{!s.DOB__c}"/>
+                <apex:column headerValue="Class" value="{!s.Class__r.Name}"/>
+                <apex:column headerValue="Generate PDf">
+                    <apex:commandLink value="Generate PDF" action="{!getStudentId}" >
+                        <apex:param name="SelectedStudentId" value="{!s.Id}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <!--<apex:commandLink action="{!attachPDF}" value="Generate PDF"/>-->	
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>
