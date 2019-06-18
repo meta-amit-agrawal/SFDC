@@ -13,7 +13,6 @@
                         <apex:param name="SelectedStudentId" value="{!s.Id}"/>
                     </apex:commandLink>
                 </apex:column>
-                <!--<apex:commandLink action="{!attachPDF}" value="Generate PDF"/>-->	
             </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>

@@ -11,7 +11,6 @@ public class StudentPDFGeneratorController {
         PageReference pdfPage = new PageReference('/apex/StudentPageToPDF?id='+student.id);
         List<Attachment> attachmentList = [SELECT Id FROM Attachment WHERE ParentID =:student.id];
         if(attachmentList.size()>0){
-            System.debug('Deleted');
             delete attachmentList;
         }
         Blob body = pdfPage.getContent();
@@ -22,13 +21,13 @@ public class StudentPDFGeneratorController {
         attachment.ParentId = student.Id;	
         insert attachment;
         
-        PageReference page = new PageReference('/apex/StudentPageToPDF?id='+student.id);
-        return page;
+        return pdfPage;
     }
     
     public PageReference getStudentId(){
         selectedId = ApexPages.currentPage().getparameters().get('SelectedStudentId');
-        student = [SELECT Id, First_Name__c, Last_Name__c, DOB__c, Class__r.Name FROM Student__C WHERE Id = :selectedId];
+        Map<Id, Student__c> studentMap = new Map<Id, Student__c>(students);
+        student = studentMap.get(selectedId);
         PageReference page =  attachPDF();
         page.setRedirect(true);
         return page;
