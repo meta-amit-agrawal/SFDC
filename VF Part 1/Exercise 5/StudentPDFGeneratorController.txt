@@ -1,0 +1,38 @@
+public class StudentPDFGeneratorController {
+    public List<Student__c> students{get; set;}
+    public Student__C student;
+    public String selectedId{get; set;}
+    
+    public StudentPDFGeneratorController(ApexPages.StandardController stdCon){
+        students = [SELECT Id, First_Name__c, Last_Name__c, DOB__c,Class__r.Name FROM Student__c];
+    }
+    
+    public PageReference attachPDF(){
+        PageReference pdfPage = new PageReference('/apex/StudentPageToPDF?id='+student.id);
+        List<Attachment> attachmentList = [SELECT Id FROM Attachment WHERE ParentID =:student.id];
+        if(attachmentList.size()>0){
+            delete attachmentList;
+        }
+        Blob body = pdfPage.getContent();
+        Attachment attachment = new Attachment();
+        attachment.Body = body;
+        attachment.ContentType='application/pdf';
+        attachment.Name = 'StudentDetail.pdf';
+        attachment.ParentId = student.Id;	
+        insert attachment;
+        
+        return pdfPage;
+    }
+    
+    public PageReference getStudentId(){
+        selectedId = ApexPages.currentPage().getparameters().get('SelectedStudentId');
+        Map<Id, Student__c> studentMap = new Map<Id, Student__c>(students);
+        student = studentMap.get(selectedId);
+        PageReference page =  attachPDF();
+        page.setRedirect(true);
+        return page;
+    }
+    
+    
+    
+}

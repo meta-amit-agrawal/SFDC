@@ -1,0 +1,44 @@
+public class ManageClassController {
+    public List<Class__c> classes {get; set;}
+    private Map<Id, Class__c> classMap;
+    public Id selectedId{get; set;}
+    public Boolean editArea{get; set;}
+    public Class__c classUpdateData{get; set;}
+    
+    public ManageClassController(){
+        editArea = false;
+        classes = [
+                  SELECT Id, Name, MaxSize__c, Teacher__r.Name
+                  FROM Class__c
+                  ];
+    }
+    
+    public void editClass(){
+        classMap = new Map<Id, Class__c>(classes);
+        classUpdateData = classMap.get(selectedId);
+        editArea = true;
+    }
+    
+    public void deleteClass(){
+        classMap = new Map<Id, Class__c>(classes);
+        delete classMap.get(selectedId);
+        classMap.remove(selectedId);
+        classes = classMap.values();
+        
+    }
+    
+    public void updateClass(){
+       
+        update classUpdateData;
+        classes = [
+                  SELECT Id, Name, MaxSize__c, Teacher__r.Name
+                  FROM Class__c
+                  ]; 
+        editArea = false;
+    }
+    
+    public void cancel(){
+        editArea = false;
+    }
+
+}

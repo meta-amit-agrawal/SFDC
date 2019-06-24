@@ -1,0 +1,5 @@
+<apex:page standardController="Contact">
+    <p style="background-color:blue; color:white; font-size:14pt" align="center">
+        {! Contact.recordType.Name} Teacher
+    </p>
+</apex:page>

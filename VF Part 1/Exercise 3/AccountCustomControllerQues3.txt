@@ -1,0 +1,82 @@
+public class AccountcustomControllerQues3 {
+    private static Integer defaultsize = 5;
+    public Integer noOfRecords{get; set;}
+    public Integer size{get; set;}
+    public String selectedOption{get; set;}
+    public String searchString{get; set;}
+    public List<Account> account{get; set;}
+    
+    public AccountcustomControllerQues3(){
+        account=(List<Account>)setCon.getRecords();
+    }	
+    
+    public ApexPages.StandardSetController setCon{
+        get
+        {
+            if(setCon == null){
+                if(size==null){
+                    size=defaultsize;
+                }
+                
+                String searchquery = 'SELECT Name, ID,BillingCountry,BillingState,BillingCity FROM Account';
+                account = Database.query(searchquery);
+                setCon = new ApexPages.StandardSetController(account);
+                setCon.setPageSize(size);
+                noOfRecords = setCon.getResultSize();
+            }
+            return setCon;
+        }
+        set;
+    }
+    
+    public List<Selectoption> getsearchKey(){
+        List<SelectOption> searchKeyList = new List<SelectOption>();
+        searchKeyList.add(new SelectOption('BillingCity','Billing City'));
+        searchKeyList.add(new SelectOption('BillingState','Billing State'));
+        searchKeyList.add(new SelectOption('BillingCountry','Billing Country'));
+        return searchKeyList;
+    }
+    
+    public void search(){
+        size=defaultsize;
+        if(searchString!=null){
+            String searchquery = 'SELECT Name, ID,BillingCountry,BillingState,BillingCity FROM Account WHERE '+selectedOption+' Like \''+searchString+'%\''	;
+            setCon = new ApexPages.StandardSetController(Database.getQueryLocator(searchquery));
+        setCon.setPageSize(size);
+        noOfRecords = setCon.getResultSize();
+        account = (List<Account>)setCon.getRecords();
+        }
+    }
+    
+    public Boolean hasNext{
+        get{
+            return setCon.getHasNext();
+        }
+        set;
+    }
+    
+    public Boolean hasPrevious{
+        get
+        {
+            return setCon.getHasPrevious();
+        }
+        set;
+    }
+    
+    public Integer pageNumber{
+        get
+        {
+            return setCon.getPageNumber();
+        }
+        set;
+    }    
+    public void next(){
+        setCon.next();
+        account = (List<Account>)setCon.getRecords();
+    }
+    
+    public void previous(){
+        setCon.previous();
+        account = (List<Account>)setCon.getRecords();
+    }
+}

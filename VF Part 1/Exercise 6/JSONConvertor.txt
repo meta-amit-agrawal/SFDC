@@ -1,0 +1,13 @@
+public class JSONConvertor {
+    public String jsonOutput{get; set;}
+    public Id studentId{get; set;}
+    
+    public void convertToJSON(){
+        Student__c student = [
+                             SELECT Id, First_Name__c, Last_Name__c, DOB__c, Age__c 
+                             FROM Student__c 
+                             WHERE Id = :studentId
+                             ];
+        jsonOutput = JSON.serialize(student);
+    }
+}

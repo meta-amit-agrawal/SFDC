@@ -1,0 +1,23 @@
+<apex:page controller="AccountCustomController">
+    <apex:form >
+        <apex:pageBlock title="Account Search">
+            <apex:pageBlockSection >
+                <apex:selectList value="{!selectedOption}" size="1" multiselect="false">
+                    <apex:selectOptions value="{!searchKey}">
+                    </apex:selectOptions>
+                </apex:selectList>
+                <apex:inputText value="{!searchString}" label="Input"/>
+                <apex:commandButton value="Search Records" action="{!search}" reRender="show_account"/>
+            </apex:pageBlockSection>
+
+                <apex:pageBlockTable id="show_account" value="{!account}" var="a">
+                    <apex:column value="{!a.Id}"/>
+                    <apex:column value="{!a.Name}"/>
+                    <apex:column value="{!a.BillingCity}"/>
+                    <apex:column value="{!a.BillingState}"/>
+                    <apex:column value="{!a.BillingCountry}"/>
+                </apex:pageBlockTable>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,19 @@
+public class AccountCustomController {
+    public String selectedOption{get; set;}
+    public List<Account> account{get; set;}
+    public String searchString{get; set;}
+    
+    public List<Selectoption> getsearchKey(){
+        List<SelectOption> searchKeyList = new List<SelectOption>();
+        searchKeyList.add(new SelectOption('BillingCity','Billing City'));
+        searchKeyList.add(new SelectOption('BillingState','Billing State'));
+        searchKeyList.add(new SelectOption('BillingCountry','Billing Country'));
+        return searchKeyList;
+    }
+
+    public void search(){
+        String searchquery = 'SELECT Name, ID,BillingCountry,BillingState,BillingCity FROM Account WHERE '+selectedOption+' = \''+searchString+'\' Limit 100'	;
+        account = Database.query(searchquery); 
+    }
+
+}

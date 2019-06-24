@@ -1,0 +1,19 @@
+<apex:page standardController="Student__c" renderAs="pdf" applyBodyTag="false">
+    <body>
+        <center>
+            <h1>
+                New PDF Of Student {!Student__c.Name} is Generated..!
+            </h1>
+            
+            <apex:panelGrid columns="1" width="100%">
+                <apex:outputText >Name :</apex:outputText>
+                <apex:outputText >{!Student__c.First_Name__c} {!Student__c.Last_Name__c}</apex:outputText>
+                <apex:outputText >Class :</apex:outputText>
+                <apex:outputText >{!Student__c.Class__r.Name}</apex:outputText>
+                <apex:outputText >DOB :</apex:outputText>
+                <apex:outputText >{!Student__c.DOB__c}</apex:outputText>
+            </apex:panelGrid>
+            
+        </center>
+    </body>
+</apex:page>
