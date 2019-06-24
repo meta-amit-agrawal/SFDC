@@ -1,0 +1,16 @@
+public class ProductWrapper {
+    public Boolean isSelected{get;set;}
+    public Product2 product{get; set;}
+    public Integer selectedQuantity{get; set;}
+    public Decimal availableQuantity{get; set;}
+    Public Decimal totalPrice{get;set;}
+    
+    public ProductWrapper(Product2 p){
+        product = p;
+        isSelected = false;
+        selectedQuantity=0;
+        availableQuantity = p.Quantity__c;
+        totalPrice=0;
+    }
+
+}

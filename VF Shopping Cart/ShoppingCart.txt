@@ -1,0 +1,154 @@
+<apex:page controller="ShoppingCartController" docType="html-5.0">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <apex:stylesheet value="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    
+    <script>
+    function validateQTY(ele,availableQuantity,productId){
+        var selectedQuantity = ele.value;
+        if(parseInt(selectedQuantity) <= 0 || !selectedQuantity){
+            alert("Quantity cannot be Negative or zero");
+            ele.value = 1;
+        } else if(parseInt(selectedQuantity) > parseInt(availableQuantity)){
+            alert("Quantity cannot greater than available");   
+            ele.value = availableQuantity;
+        }
+        updateCartJS(productId);
+    }
+    
+    </script>
+    <apex:form > 
+        <apex:actionFunction name="updateCartJS" action="{!updateCart}" reRender="cartArea,newPurchaseArea" >
+            <apex:param name="productToBeDeleted" value="productId" assignTo="{!changedProductId}"/>
+        </apex:actionFunction>
+        
+        <apex:outputPanel id="firstB">
+            <apex:pageBlock rendered="{!firstBlock}">
+                <script>
+                $(document).ready(function(){
+                    $('#purchaseOrderTable').DataTable();
+                });
+                </script>
+                <apex:outputPanel id="purchaseOrderArea" rendered="{!showPurchaseOrderArea}">
+                    <table id="purchaseOrderTable" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Order Price</th>
+                                <th>Order Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!purchaseOrderListVF}" var="po">
+                                
+                                <tr>
+                                    <td>{!po.Id}</td>
+                                    <td>{!po.Order_Price__c}</td>
+                                    <td>{!po.Order_Status__c}</td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton value="Add New Purchase" action="{!addNewPurchase}" reRender="newPurchaseArea"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock> 
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="newPurchaseArea">
+            
+            <script>
+            $(document).ready(function(){
+                $('#productListTable').DataTable();
+            });
+            </script>
+            
+            <apex:pageBlock rendered="{! showNewPurchaseArea}" title="New Order">
+                <table id="productListTable" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Product Id</th>
+                            <th>Product Name</th>
+                            <th>Product Code</th>
+                            <th>Price Per Unit</th>
+                            <th>Available Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!productsList}" var="p">
+                            
+                            <tr>
+                                <td><apex:inputCheckbox value="{!p.isSelected}"/></td>
+                                <td>{!p.product.Id}</td>
+                                <td>{!p.product.Name}</td>
+                                <td>{!p.product.ProductCode}</td>
+                                <td>{!p.product.Price__c}</td>
+                                <td>{!p.product.Quantity__c}</td>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+                <apex:pageBlockButtons location="top" html-align="right">
+                    <apex:commandButton value="Add To Cart" action="{!addToCart}"  reRender="cartArea,newPurchaseArea"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="cartArea">
+            <apex:pageBlock rendered="{!showCartArea}" title="Cart">
+                <apex:pageBlockTable value="{! productItems}" var="pitem">
+                    <apex:column value="{! pitem.product.Id}"/>
+                    <apex:column value="{! pitem.product.Name}"/>
+                    <apex:column value="{! pitem.product.Price__c}"/>
+                    <apex:column headerValue="Quantity Selected">
+                        <apex:input type="number" value="{!pitem.selectedQuantity}" id="Quantity" onchange="validateQTY(this, '{!pitem.availableQuantity}','{!pitem.product.Id}')" ></apex:input>
+                    </apex:column>
+                    <apex:column >
+                        <apex:commandLink value="Delete" action="{!deleteProduct}" reRender="cartArea,newPurchaseArea">
+                            <apex:param name="productToBeDeleted" value="{!pitem.product.Id}" assignTo="{!productToBeDeleted}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Checkout" action="{!checkoutCart}" id="checkoutButton" reRender="firstB,newPurchaseArea,cartArea,checkoutArea"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="checkoutArea">
+            <apex:pageBlock rendered="{!showPlaceOrderArea}" >
+                <apex:outputText >
+                    Invoie No:
+                </apex:outputText>
+                <div style="text-align:right">
+                    <apex:outputText style="align:right">
+                        Order Date: {!getTodayDate}
+                    </apex:outputText>
+                </div>
+                <apex:pageBlockTable value="{!placeOrder}" var="po">
+                    <apex:column value="{! po.product.Id}"/>
+                    <apex:column value="{! po.product.Name}"/>
+                    <apex:column value="{! po.product.Price__c}" headerValue="Price Per Unit"/>
+                    <apex:column value="{!po.selectedQuantity}" headerValue="Selected Quantity"/>
+                    <apex:column headerValue="Total Price" value="${!po.totalPrice}"/>
+                </apex:pageBlockTable>
+                <apex:outputText >
+                    <table style="width:100%">
+                        <tr>
+                            <td align="Right">
+                                Total Price: {!totalPrice}
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputText>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Place Order" action="{!placeFinalOrder}" reRender="firstB,newPurchaseArea,cartArea,checkoutArea"/>
+                    <apex:commandButton value="Cancel" action="{!cancelPlaceOrder}"  reRender="firstB,newPurchaseArea,cartArea,checkoutArea"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+    </apex:form>
+</apex:page>
