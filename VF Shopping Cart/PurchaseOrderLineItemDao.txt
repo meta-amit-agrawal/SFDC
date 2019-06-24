@@ -1,0 +1,11 @@
+public class PurchaseOrderLineItemDao implements IPurchaseOrderLineItemDao{
+    
+    public interface IPurchaseOrderLineItemDao{
+        void insertProducts(List<Purchase_Order_Line_Item__c> poli);
+    }
+    
+    public static void insertProducts(List<Purchase_Order_Line_Item__c> poli){
+        insert poli;
+    }
+
+}

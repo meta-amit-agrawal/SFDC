@@ -1,0 +1,17 @@
+public class ProductDao implements IProductDAO {
+	public interface IProductDAO {
+        List<Product2> getProducts();
+        void updateProductsInDB(List<Product2> productToBeUpdated);
+    }
+    public static List<Product2> getProducts(){
+        return [
+               SELECT Id, Name, Price__c, Quantity__c,ProductCode 
+               FROM Product2 
+               WHERE Price__c !=null AND Quantity__c!= null
+               ];
+    }
+    
+    public static void updateProductsInDB(List<Product2> productToBeUpdated){
+        update productToBeUpdated;
+    }
+}

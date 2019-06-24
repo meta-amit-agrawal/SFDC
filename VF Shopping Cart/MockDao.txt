@@ -1,0 +1,15 @@
+public class MockDAO {
+    public class ProductDaoMock implements ProductDao.IProductDAO{
+        List<Product2> products;
+        public List<Product2> getProducts(){
+            return products;
+        }
+    }
+    
+    public class PurchaseOrderDaoMock implements PurchaseOrderDao.IPurchaseOrderDao{
+        List<Purchase_Order__c> purchaseOrderList;
+        public List<Purchase_Order__c> getPurchaseOrderList(){
+            return purchaseOrderList;
+        }
+    }
+}

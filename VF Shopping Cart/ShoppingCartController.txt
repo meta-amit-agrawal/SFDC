@@ -1,0 +1,138 @@
+public class ShoppingCartController {
+    
+    public String getTodayDate{get;set;}
+    public List<Purchase_Order__c> purchaseOrderListVF{get; set;}
+    public Boolean showPurchaseOrderArea{get; set;}
+    public Boolean showNewPurchaseArea{get; set;}
+    public List<ProductWrapper> productsList{get;set;}
+    public Boolean showCartArea{get;set;}
+    public Boolean firstBlock{get;set;}
+    public Boolean showPlaceOrderArea{get;set;}
+    public Id changedproductId{get;set;}
+    public Id productToBeDeleted{get;set;}
+    public List<ProductWrapper> placeOrder{get;set;}
+    public Decimal totalPrice{get;set;}
+    
+    @testVisible ProductDao.IProductDAO productDAOInstance = new ProductDao();
+    @testVisible PurchaseOrderDao.IPurchaseOrderDao purchaseOrderDaoInstance = new PurchaseOrderDao();
+    @testVisible PurchaseOrderLineItemDao.IPurchaseOrderLineItemDao purchaseOrderLineItemDaoInstance = new PurchaseOrderLineItemDao();
+    
+    Private Map<Id, ProductWrapper> productMap = new Map<Id, ProductWrapper>();
+    private Map<Id, ProductWrapper> selectedProductMap = new Map<Id, ProductWrapper>();
+    Private List<ProductWrapper> selectedproduct = new List<ProductWrapper>();
+    
+    public ShoppingCartController(){
+        firstBlock=true;
+        purchaseOrderListVF = purchaseOrderDaoInstance.getPurchaseOrderList();
+        if(purchaseOrderListVF.size()>0){
+            showPurchaseOrderArea=true;
+        }
+        else{
+            showPurchaseOrderArea=false;  
+        }
+        showNewPurchaseArea= false;
+        showCartArea = false;
+        showPlaceOrderArea = false;
+        totalPrice = 0;
+    }
+    
+    public void addNewPurchase(){
+        if(productsList == null){
+            productsList = new List<ProductWrapper>();
+            for(Product2 p : productDAOInstance.getProducts()){
+                productsList.add(new ProductWrapper(p));
+                productMap.put(p.Id, new ProductWrapper(p));
+            }
+        }
+        showNewPurchaseArea = true;
+    }
+    
+    public void addToCart(){
+        for(ProductWrapper p : productsList){
+            if(p.isSelected == true){
+                if(p.product.Quantity__c > 0){
+                    if(selectedProductMap.containsKey(p.product.Id)){
+                        p.selectedQuantity = p.selectedQuantity +1;
+                        p.product.Quantity__c = p.availableQuantity - p.selectedQuantity;
+                    }
+                    else{
+                        p.selectedQuantity = 1;
+                        p.product.Quantity__c = p.availableQuantity - p.selectedQuantity;
+                        selectedProductMap.put(p.product.Id, p);
+                    }
+                }
+            }
+        }
+        if(selectedProductMap.size()>0){
+            showCartArea = true;
+        }
+        else{
+            showCartArea = false;
+        }
+    }
+    
+    public List<ProductWrapper> getproductItems(){
+        selectedproduct.clear();
+        selectedproduct = selectedProductMap.values();
+        return selectedproduct;
+    }
+    
+    public void updateCart(){
+        ProductWrapper pw = selectedProductMap.get(changedproductId);
+        pw.product.Quantity__c = pw.availableQuantity - pw.selectedQuantity;
+    }
+    
+    public void deleteProduct(){
+        ProductWrapper p = productMap.get(productToBeDeleted);
+        p.product.Quantity__c = p.availableQuantity ;
+        selectedProductMap.remove(productToBeDeleted);
+        if(selectedProductMap.size()==0){
+            showCartArea = false;
+        }
+    }
+    
+    public void checkoutCart(){
+        totalPrice = 0;
+        placeOrder = selectedProductMap.values();
+        for(ProductWrapper p : placeOrder){
+            p.totalPrice = p.selectedQuantity * p.product.Price__c;
+            totalPrice = totalPrice + p.totalPrice;
+        }
+        getTodayDate = System.Today().format();
+        showPlaceOrderArea=true;
+        showCartArea = false;
+        showNewPurchaseArea = false;
+        showPurchaseOrderArea = false;
+        firstBlock = false;
+    }
+    
+    public void cancelPlaceOrder(){
+        showPlaceOrderArea=false;
+        showCartArea = true;
+        showNewPurchaseArea = true;
+        showPurchaseOrderArea = true;
+        firstBlock = true;
+    }
+    
+    public void placeFinalOrder(){
+        Purchase_Order__c po = new Purchase_Order__c(Order_Status__c = 'Pending', Order_Price__c=totalPrice);
+        Id purchaseOrderId = purchaseOrderdaoInstance.updatePurchaseOrder(po);
+        List<Purchase_Order_Line_Item__c> poliList = new List<Purchase_Order_Line_Item__c>();
+        List<ProductWrapper> updatedProductwrapperList = selectedProductMap.values();
+        List<Product2> updatedProductList = new List<Product2>();
+        for(ProductWrapper p : updatedProductwrapperList){
+            Purchase_Order_Line_Item__c poli = new Purchase_Order_Line_Item__c(Purchase_Order__c = purchaseOrderId, Product__c = p.product.id,Quantity__c = p.selectedQuantity);
+            poliList.add(poli);
+            updatedProductList.add(p.product);
+        }
+        productDaoInstance.updateProductsInDB(updatedProductList);
+        purchaseOrderLineItemDaoInstance.insertProducts(poliList);
+        purchaseOrderListVF = purchaseOrderDaoInstance.getPurchaseOrderList();
+        showPlaceOrderArea=false;
+        showCartArea = false;
+        showNewPurchaseArea = false;
+        showPurchaseOrderArea = true;
+        firstBlock = true;
+    }
+     
+}
