@@ -6,6 +6,7 @@ public class ExecuteQueryController {
     public Integer noOfRecords{get;set;}
     public String sortAccordingTo{get;set;}
     private Integer defaultsize=5;
+    public boolean showTable{get;set;}
 
     
     public ApexPages.StandardSetController setCon
@@ -58,26 +59,29 @@ public class ExecuteQueryController {
     
     private List<SObject> getAllRecords(){
         String query = createQuery();
-        Boolean flag=false;
+        Boolean flag=true;     
         List<SObject> resultant;
         try{
             resultant = Database.query(query);
-            flag=true;
         }
         catch(Exception e){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage()));
+            flag=false;  
         }
         if(flag){
             if(resultant.isEmpty()){
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO,'No Records Found'));
+                showTable=false;
                 resultant = new List<Contact>();
             }
             else{
+                showTable=true;
                 getFieldsList(resultant[0]);
             }
         }
         else{
-             resultant = new List<Contact>();
+            showTable=false;
+            resultant = new List<Contact>();
         }
         
         return resultant;

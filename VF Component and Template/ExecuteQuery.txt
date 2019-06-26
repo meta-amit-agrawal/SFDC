@@ -5,7 +5,7 @@
         
         <apex:pageBlock title="Query Results">
             <apex:pageMessages />
-            <apex:pageBlockTable value="{! records}" var="r">
+            <apex:pageBlockTable value="{! records}" var="r" rendered="{! showTable}">
                 <apex:repeat value="{! fieldList}" var="f"> 
                     <apex:column >
                         <apex:facet name="header">
@@ -38,6 +38,7 @@
             <apex:input value="{!gotoPage}" type="number" html-placeholder="Enter Page Number" disabled="{! If(setCon.resultSize==0,'true','false')}"/>
             &nbsp;&nbsp;&nbsp;
             <apex:commandButton value="Go" action="{!gotoPageNumber}" reRender="queryResults" disabled="{! If(setCon.resultSize==0,'true','false')}"/>
+            
         </apex:pageBlock>
     </apex:outputPanel>
 </apex:component>
