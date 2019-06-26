@@ -1,0 +1,14 @@
+public class QueryEditorVFController {
+    
+    Public Boolean showQueryResult{get;set;}
+    public String query{get;set;}
+  
+    public void execute(){
+        if(!String.isBlank(query)){
+            showQueryResult = true;
+        }
+        else{
+            showQueryResult = false;
+        }
+    }  
+}
