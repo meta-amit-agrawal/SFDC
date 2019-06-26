@@ -1,0 +1,15 @@
+<apex:page controller="QueryEditorVFController" docType="html-5.0">
+    <apex:form >
+        <apex:pageBlock title="Query Editor">
+            <apex:pageBlockSection collapsible="false">
+                <apex:input value="{!query}" html-placeholder="Enter Query" style="width:100%"/>
+                <apex:commandButton value="Execute Query" action="{!execute}" reRender="executeQueryComponent"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="executeQueryComponent">
+            <c:ExecuteQuery query="{!query}" rendered="{!showQueryResult}"/>
+        </apex:outputPanel>
+       
+    </apex:form>
+</apex:page>

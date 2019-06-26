@@ -1,0 +1,44 @@
+<apex:component controller="ExecuteQueryController">
+    <apex:attribute name="query" description="This is the query to be executed." type="String" assignTo="{!queryCon}"/>
+    
+    <apex:outputPanel id="queryResults">
+        
+        <apex:pageBlock title="Query Results">
+            <apex:pageMessages />
+            <apex:pageBlockTable value="{! records}" var="r" rendered="{! showTable}">
+                <apex:repeat value="{! fieldList}" var="f"> 
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!sorting}" reRender="queryResults">{!f}
+                                <apex:param name="sortAccordingTo" assignTo="{!sortAccordingTo}" value="{!f}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        {!r[f]}
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+            <apex:commandButton value="First" action="{!first}" rendered="{!hasPrevious}" disabled="{!NOT(hasPrevious)}" reRender="queryResults"/>
+            <apex:commandButton disabled="{! NOT(hasPrevious) }" value="First" rendered="{! NOT(hasPrevious)}" />
+            <apex:commandButton value="Previous" disabled="{! NOT(hasPrevious)}" rendered="{! NOT(hasPrevious)}"/>
+            <apex:commandButton value="Previous" rendered="{!hasPrevious}" action="{!previous}" disabled="{!NOT(hasPrevious)}" reRender="queryResults"/>
+            <apex:commandButton value="Next" rendered="{!NOT(hasNext)}" disabled="{!NOT(hasNext)}"/>
+            <apex:commandButton value="Next" rendered="{!hasNext}" action="{!next}" disabled="{!NOT(hasNext)}" reRender="queryResults"/>
+            <apex:commandButton value="Last" action="{!last}" rendered="{!hasNext}" disabled="{!NOT(hasNext)}" reRender="queryResults"/>
+            <apex:commandButton value="Last" disabled="{!NOT(hasNext)}" rendered="{! NOT(hasNext)}"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputText value="{! If(setCon.PageNumber==1 , 1, ((setCon.pageNumber-1)*setCon.pageSize)+1)} -
+                                    {! If(setCon.pageNumber<(noOfRecords/setCon.pageSize), setCon.pageNumber*setCon.pageSize , noOfRecords )}
+                                    of {!noOfRecords}">
+            </apex:outputText>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputText >
+                Go To Page:
+            </apex:outputText>
+            &nbsp;&nbsp;
+            <apex:input value="{!gotoPage}" type="number" html-placeholder="Enter Page Number" disabled="{! If(setCon.resultSize==0,'true','false')}"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:commandButton value="Go" action="{!gotoPageNumber}" reRender="queryResults" disabled="{! If(setCon.resultSize==0,'true','false')}"/>
+            
+        </apex:pageBlock>
+    </apex:outputPanel>
+</apex:component>

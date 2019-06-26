@@ -1,0 +1,131 @@
+public class ExecuteQueryController {
+    
+    public String queryCon='';
+    public List<String> fieldList{get;set;}
+    public Integer gotoPage{get;set;}
+    public Integer noOfRecords{get;set;}
+    public String sortAccordingTo{get;set;}
+    private Integer defaultsize=5;
+    public boolean showTable{get;set;}
+
+    
+    public ApexPages.StandardSetController setCon
+    {
+        get
+        {
+            if(setCon==null){
+                setCon = new ApexPages.StandardSetController(getAllRecords());
+                setCon.setPageSize(defaultsize);
+                noOfRecords = setCon.getResultSize();
+            }
+            return setCon;
+        }
+        set;
+    }
+    
+    public String getQueryCon(){
+        return this.queryCon;
+    }
+    
+    public void setQueryCon(String newQuery){
+        if(!queryCon.equalsIgnoreCase(newQuery)){
+            this.queryCon = newQuery;
+            this.setCon = null;
+            sortAccordingTo = '';
+            gotoPage=null;
+        }
+    }
+    
+    public void sorting(){
+        this.setCon=null;
+        gotoPage=null;
+    }
+    
+    public List<SObject> getRecords(){
+        return this.setCon.getRecords();
+    }
+    
+    private void getFieldsList(sObject obj){
+        this.fieldList = new List<String>(obj.getPopulatedFieldsAsMap().keyset());
+    }
+    
+    private String createQuery(){
+        String query = queryCon;
+        if(!String.isBlank(sortAccordingTo)){
+            query = queryCon + ' ORDER BY ' + sortAccordingTo;
+        }
+        return query;
+    }
+    
+    private List<SObject> getAllRecords(){
+        String query = createQuery();
+        Boolean flag=true;     
+        List<SObject> resultant;
+        try{
+            resultant = Database.query(query);
+        }
+        catch(Exception e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,e.getMessage()));
+            flag=false;  
+        }
+        if(flag){
+            if(resultant.isEmpty()){
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO,'No Records Found'));
+                showTable=false;
+                resultant = new List<Contact>();
+            }
+            else{
+                showTable=true;
+                getFieldsList(resultant[0]);
+            }
+        }
+        else{
+            showTable=false;
+            resultant = new List<Contact>();
+        }
+        
+        return resultant;
+    }
+    
+    public Boolean hasPrevious{
+        get{return this.setCon.getHasPrevious();}
+        set;
+    }
+    
+    public Boolean hasNext{
+        get{return this.setCon.getHasNext();}
+        set;
+    }
+    
+    public void next(){
+        this.setCon.next();
+        gotoPage = null;
+    }
+    
+    public void previous(){
+        this.setCon.previous();
+        gotoPage = null;
+    }
+    
+    public void first(){
+        this.setCon.first();
+        gotoPage = null;
+    }
+    
+    public void last(){
+        this.setCon.last();
+        gotoPage = null;
+    }
+    
+    public void gotoPageNumber(){
+        Integer totalPages = noOfRecords / defaultsize;
+        if(gotoPage > totalPages && gotoPage < 1){
+            return;
+        }
+        setCon.setPageNumber(gotoPage);   
+        gotoPage = null;
+    }
+    
+   
+
+}
